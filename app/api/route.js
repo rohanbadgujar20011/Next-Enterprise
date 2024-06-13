@@ -14,6 +14,6 @@ export async function POST(request) {
   await Products.create({ title, description, price });
   return NextResponse.json(
     { message: "Product created successfully" },
-    { status: 200 }
+    { status: 201 }
   );
 }

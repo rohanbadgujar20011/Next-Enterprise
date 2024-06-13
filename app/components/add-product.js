@@ -1,16 +1,21 @@
+// app/components/add-product.js
 "use client";
-import React from "react";
-import BreadCrumb from "@/app/components/bread-crumb";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+
+import React from 'react';
+import BreadCrumb from '@/app/components/bread-crumb';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import useProductStore from '@/app/store/productStore';
+import axios from 'axios';
 
 const breadCrumb = [
-  { title: "Home", url: "../" },
-  { title: "Add New Product", url: "../add/" },
+  { title: 'Home', url: '../' },
+  { title: 'Add New Product', url: '../add/' },
 ];
 
 const AddProduct = () => {
   const router = useRouter();
+  const { addProduct } = useProductStore();
 
   const {
     register,
@@ -20,21 +25,17 @@ const AddProduct = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await fetch("../api", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to add product");
+      const res = await axios.post('../api', data);
+      console.log(res);
+      if (res.status !== 201) {
+        throw new Error('Failed to add product');
       }
-
-      const { message } = await res.json();
-      alert(message);
-      router.push("../");
+      addProduct(res.data.product);
+      alert('Product added successfully');
+      router.push('../');
     } catch (error) {
-      console.log("Failed to add product", error);
-      alert("Failed to add product");
+      console.log('Failed to add product', error);
+      alert('Failed to add product');
     }
   };
 
@@ -52,7 +53,7 @@ const AddProduct = () => {
                 </label>
                 <input
                   className="form-control"
-                  {...register("title", { required: true })}
+                  {...register('title', { required: true })}
                 />
               </div>
               <div className="mb-3">
@@ -61,7 +62,7 @@ const AddProduct = () => {
                 </label>
                 <textarea
                   className="form-control"
-                  {...register("description", { required: true })}
+                  {...register('description', { required: true })}
                 ></textarea>
               </div>
               <div className="mb-3">
@@ -70,7 +71,7 @@ const AddProduct = () => {
                 </label>
                 <input
                   className="form-control"
-                  {...register("price", { required: true })}
+                  {...register('price', { required: true })}
                 />
               </div>
               <div className="mb-3 text-end">
